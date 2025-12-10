@@ -1,0 +1,31 @@
+<h2>Cadastrar Nova Conta Corrente</h2>
+
+<div style="color: green;" *ngIf="mensagem">
+  {{ mensagem }}
+</div>
+
+<div style="color: red;" *ngIf="erro">
+  {{ erro }}
+</div>
+
+<form (ngSubmit)="salvar()">
+
+  <label>Nome</label><br>
+  <input type="text" [(ngModel)]="model.nome" name="nome" size="60" maxlength="60"><br><br>
+
+  <label>Email</label><br>
+  <input type="email" [(ngModel)]="model.email" name="email"  size="60" maxlength="60"><br><br>
+
+  <label>Agência</label><br>
+  <input type="text" [(ngModel)]="model.agencia" pattern="\d*" name="agencia"  size="4" maxlength="4"><br><br>
+
+  <label>Conta</label><br>
+  <input type="text" [(ngModel)]="model.conta" pattern="\d*" name="conta"   size="5" maxlength="5"><br><br>
+
+  <label>DAC</label><br>
+  <input type="text" [(ngModel)]="model.dac" pattern="\d*" name="dac"   size="2" maxlength="5"><br><br>
+
+  <button type="submit" class="btn btn-green">Salvar</button>
+  <button type="button" class="btn btn-blue" (click)="inicio()">Início</button>
+
+</form>

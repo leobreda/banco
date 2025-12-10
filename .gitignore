@@ -22,6 +22,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+node_modules/
+
+.angular/cache
 
 # .NET Core
 project.lock.json
@@ -55,3 +58,6 @@ nunit-*.xml
 
 .suo
 .vs
+*.user
+*.userosscache
+*.sln.docstates

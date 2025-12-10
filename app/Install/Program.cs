@@ -1,4 +1,6 @@
 ﻿using Api.Data.Commands;
+using Api.Models;
+using Dapper;
 using Microsoft.Data.Sqlite;
 
 public class Program
@@ -9,7 +11,10 @@ public class Program
         string database_file = Environment.ExpandEnvironmentVariables("%USERPROFILE%") + "/" + DATABASE_FILE;
 
         if (System.IO.File.Exists(database_file))
-            Environment.Exit(0);
+        {
+            File.Delete(database_file);
+            //Environment.Exit(0);
+        }
 
         Console.WriteLine("Instalando banco de dados...");
 
@@ -23,12 +28,27 @@ public class Program
                 command.ExecuteNonQuery();
             }
 
-            using (var command = connection.CreateCommand())
+            Console.WriteLine("criando conta 1000/20000-3...");
+            Api.Models.Cliente cliente = new Api.Models.Cliente()
             {
-                Console.WriteLine("criando tabela [extrato]...");
-                command.CommandText = Install.CreateTableExtrato();
-                command.ExecuteNonQuery();
-            }
+                nome = "Fulano Beltrano",
+                email = "fulano@funalo.com",
+                agencia = 1000,
+                conta = 20000,
+                dac = 3,
+                senha = "1000200003",
+                token=""
+            };
+            
+            connection.ExecuteScalar<int>(Api.Data.Commands.Cliente.Insert(), cliente);
+
+
+            //using (var command = connection.CreateCommand())
+            //{
+            //    Console.WriteLine("criando tabela [extrato]...");
+            //    command.CommandText = Install.CreateTableExtrato();
+            //    command.ExecuteNonQuery();
+            //}
             connection.Close();
         }
 

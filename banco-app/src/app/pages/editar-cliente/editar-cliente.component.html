@@ -1,0 +1,25 @@
+<h2>Editar Cliente</h2>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+<form (ngSubmit)="salvar()">
+
+  <div class="mb-3">
+    <label>Nome</label>
+    <input type="text" [(ngModel)]="nome" name="nome" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="email" [(ngModel)]="email" name="email" class="form-control" required>
+  </div>
+
+  <button class="btn btn-primary" type="submit">
+    Salvar
+  </button>
+
+  <button class="btn btn-secondary ms-2" (click)="cancelar()" type="button">
+    Cancelar
+  </button>
+</form>

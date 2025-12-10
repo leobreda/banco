@@ -1,4 +1,5 @@
-﻿namespace Api.Models.Mappers
+﻿
+namespace Api.Models.Mappers
 {
     public class Map_ClientesResponse
     {

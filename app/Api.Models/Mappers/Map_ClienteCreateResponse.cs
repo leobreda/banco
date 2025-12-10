@@ -1,10 +1,11 @@
-﻿namespace Api.Models.Mappers
+﻿
+namespace Api.Models.Mappers
 {
     public class Map_ClienteCreateResponse
     {
-        public static ClienteCreateResponse Map(ClienteCreateRequest cliente)
+        public static CreateResponse Map(CreateRequest cliente)
         {
-            return new ClienteCreateResponse
+            return new CreateResponse
             {
                 nome = cliente.nome,
                 email = cliente.email,

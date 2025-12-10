@@ -1,8 +1,9 @@
-﻿namespace Api.Models.Mappers
+﻿
+namespace Api.Models.Mappers
 {
     public class Map_Cliente
     {
-        public static Cliente Map(ClienteCreateRequest cliente)
+        public static Cliente Map(CreateRequest cliente)
         {
             return new Cliente
             {
@@ -12,9 +13,8 @@
                 conta = cliente.conta,
                 dac = cliente.dac
             };
-
         }
-        public static Cliente Map(uint id, ClienteUpdateRequest cliente)
+        public static Cliente Map(uint id, UpdateRequest cliente)
         {
             return new Cliente
             {
@@ -23,5 +23,17 @@
                 email = cliente.email,
             };
         }
+        public static Cliente Map(LoginRequest request)
+        {
+            return new Cliente
+            {
+                agencia = request.agencia,
+                conta = request.conta,
+                dac = request.dac,
+                senha = request.senha
+            };
+        }
+
+        
     }
 }

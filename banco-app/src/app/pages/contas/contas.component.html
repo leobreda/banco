@@ -1,0 +1,32 @@
+<h2>Contas Correntes</h2>
+
+<div *ngIf="error" style="color: red;">
+  {{ error }}
+</div>
+
+<table border="1" cellpadding="8" *ngIf="clientes.length > 0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Agência</th>
+      <th>Conta</th>
+      <th>DAC</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let c of clientes">
+      <td>{{ c.id }}</td>
+      <td>{{ c.nome }}</td>
+      <td>{{ c.email }}</td>
+      <td>{{ c.agencia }}</td>
+      <td>{{ c.conta }}</td>
+      <td>{{ c.dac }}</td>
+    <td><a href="javascript:void(0);" [routerLink]="['/clientes/editar', c.id]">Editar</a> / <a href="javascript:void(0);" (click)="excluirCliente(c.id)">Excluir</a></td>
+    </tr>
+  </tbody>
+</table>
+
+  <button type="button" class="btn btn-blue" (click)="inicio()">Início</button>

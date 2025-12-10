@@ -3,19 +3,14 @@ using Api.Data;
 using Api.Models;
 using Api.Models.ContaCorrente;
 using Api.Models.Mappers;
-using System.Drawing;
 using System.Net;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Api.Services
 {
     public interface IContaCorrenteService
     {
         Task<ApiResponse<SaldoResponse>> Saldo(SaldoRequest request);
-        Task<ApiResponse<DepositoResponse>> SimularDeposito(DepositarRequest request);
+        Task<ApiResponse<DepositoResponse>> SimularDeposito(Models.ContaCorrente.DepositarRequest request);
         Task<ApiResponse<DepositoResponse>> EfetivarDeposito(EfetivarDepositoRequest request);
         Task<ApiResponse<SaqueResponse>> SimularSaque(SaqueRequest request);
         Task<ApiResponse<SaqueResponse>> EfetivarSaque(EfetivarSaqueRequest request);
@@ -74,7 +69,7 @@ namespace Api.Services
             }
             cliente.senha = request.senha;
             decimal saldo = await contaCorrenteData.Saldo(cliente);
-            
+
 
             return new ApiResponse<SaldoResponse>()
             {
@@ -85,9 +80,9 @@ namespace Api.Services
         }
 
 
-        public async Task<ApiResponse<DepositoResponse>> SimularDeposito(DepositarRequest request)
+        public async Task<ApiResponse<DepositoResponse>> SimularDeposito(Models.ContaCorrente.DepositarRequest request)
         {
-            var isValid = request.IsValid();
+            var isValid = request.IsValid(request.valor,false);
 
             if (!isValid.valid)
             {
@@ -136,6 +131,20 @@ namespace Api.Services
                 };
             }
 
+            isValid = request.IsValid(request.valor);
+
+            if (!isValid.valid)
+            {
+                return new ApiResponse<DepositoResponse>()
+                {
+                    status_code = (int)HttpStatusCode.BadRequest,
+                    message = isValid.message,
+                    data = Map_DepositoResponse.Map(request, "")
+                };
+            }
+
+
+
             Cliente cliente = await this.Search(request.agencia, request.conta, request.dac);
 
             if (cliente is null)
@@ -148,7 +157,7 @@ namespace Api.Services
                 };
             }
 
-            if(!await contaCorrenteData.Depositar(cliente, request.valor))
+            if (!await contaCorrenteData.Depositar(cliente, request.valor))
             {
                 return new ApiResponse<DepositoResponse>()
                 {
@@ -159,7 +168,7 @@ namespace Api.Services
             }
 
             DepositoResponse response = Map_DepositoResponse.Map(request, cliente.nome);
-            
+
             return new ApiResponse<DepositoResponse>()
             {
                 status_code = (int)HttpStatusCode.OK,
@@ -194,7 +203,7 @@ namespace Api.Services
                 };
             }
 
-            if(!await contaCorrenteData.SimularSaque(cliente, request.valor))
+            if (!await contaCorrenteData.SimularSaque(cliente, request.valor))
             {
                 return new ApiResponse<SaqueResponse>()
                 {
@@ -251,7 +260,7 @@ namespace Api.Services
                 };
             }
 
-            if (!await contaCorrenteData.Depositar(cliente, request.valor))
+            if (!await contaCorrenteData.Sacar(cliente, request.valor))
             {
                 return new ApiResponse<SaqueResponse>()
                 {

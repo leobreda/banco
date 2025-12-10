@@ -1,4 +1,5 @@
-﻿using Api.Data;
+﻿using Api.Bootstrap;
+using Api.Data;
 using Api.Models;
 using Api.Models.Mappers;
 using System.Net;
@@ -10,24 +11,27 @@ namespace Api.Services
 {
     public interface IClienteService
     {
-        Task<ApiResponse<ClienteCreateResponse>> Create(ClienteCreateRequest clienteRequest);
+        Task<ApiResponse<CreateResponse>> Create(CreateRequest clienteRequest);
+        Task<ApiResponse<LoginResponse>> Login(LoginRequest request);
         Task<ApiResponse<List<ClientesResponse>>> ListAll();
         Task<ApiResponse<ClientesResponse>> Detail(uint id);
-        Task<ApiResponse<ClienteUpdateRequest>> Update(uint id, ClienteUpdateRequest request);
+        Task<ApiResponse<UpdateRequest>> Update(uint id, UpdateRequest request);
         Task<ApiResponse<uint>> Delete(uint id);
     }
 
     public class ClienteService : IClienteService
     {
+        private const uint TOKEN_EXPIRES = 5;
+
         private readonly IClienteData clienteData;
         public ClienteService(IClienteData _clienteData)
         {
             clienteData = _clienteData;
         }
 
-        public async Task<ApiResponse<ClienteCreateResponse>> Create(ClienteCreateRequest clienteRequest)
+        public async Task<ApiResponse<CreateResponse>> Create(CreateRequest clienteRequest)
         {
-            ClienteCreateResponse response = Map_ClienteCreateResponse.Map(clienteRequest);
+            CreateResponse response = Map_ClienteCreateResponse.Map(clienteRequest);
 
 
             //Verifica se a conta ja foi cadastrada
@@ -35,7 +39,7 @@ namespace Api.Services
             
             if (cliente is not null)
             {
-                return new ApiResponse<ClienteCreateResponse>()
+                return new ApiResponse<CreateResponse>()
                 {
                     status_code = (int)HttpStatusCode.InternalServerError,
                     message = "Conta corrente ja se encontra cadastrada",
@@ -58,7 +62,7 @@ namespace Api.Services
 
             if (ret.Equals(0))
             {
-                return new ApiResponse<ClienteCreateResponse>()
+                return new ApiResponse<CreateResponse>()
                 {
                     status_code = (int)HttpStatusCode.InternalServerError,
                     message = "Falha ao cadastrar Cliente",
@@ -70,13 +74,54 @@ namespace Api.Services
             response.senha = cliente.senha;
             
 
-            return new ApiResponse<ClienteCreateResponse>()
+            return new ApiResponse<CreateResponse>()
             {
                 status_code = (int)HttpStatusCode.Created,
                 message = "Cliente criado com sucesso",
                 data = response
             };
         }
+
+        public async Task<ApiResponse<LoginResponse>> Login(LoginRequest request)
+        {
+            Cliente cliente = Map_Cliente.Map(request);
+
+            cliente  = await clienteData.Login(cliente);
+
+            if (cliente is null)
+            {
+                return new ApiResponse<LoginResponse>()
+                {
+                    status_code = (int)HttpStatusCode.NotFound,
+                    message = "Agencia/Conta/Dac e/ou senha incorreta",
+                    data = null
+                };
+            }
+
+            string token = Token.Get(cliente.agencia, cliente.conta, cliente.dac, TOKEN_EXPIRES);
+
+            if (!await clienteData.UpdateToken(cliente, token))
+            {
+
+                return new ApiResponse<LoginResponse>()
+                {
+                    status_code = (int)HttpStatusCode.InternalServerError,
+                    message = "Falha na geracao do token",
+                    data = Map_LoginResponse.Map(cliente)
+                };
+
+            }
+
+            cliente.token = token;
+
+            return new ApiResponse<LoginResponse>()
+            {
+                status_code = (int)HttpStatusCode.OK,
+                message = "Login realizado com sucesso",
+                data = Map_LoginResponse.Map(cliente)
+            };
+        }
+
 
         public async Task<ApiResponse<List<ClientesResponse>>> ListAll()
         {
@@ -113,14 +158,14 @@ namespace Api.Services
             };
         }
 
-        public async Task<ApiResponse<ClienteUpdateRequest>> Update(uint id, ClienteUpdateRequest request)
+        public async Task<ApiResponse<UpdateRequest>> Update(uint id, UpdateRequest request)
         {
             Cliente cliente = (await clienteData.Search(new Cliente() { id = id }))?
                 .FirstOrDefault<Cliente>();
 
             if (cliente is null)
             {
-                return new ApiResponse<ClienteUpdateRequest>()
+                return new ApiResponse<UpdateRequest>()
                 {
                     status_code = (int)HttpStatusCode.NotFound,
                     message = "Cliente nao encontrado",
@@ -133,7 +178,7 @@ namespace Api.Services
             int ret = await clienteData.Update(cliente);
             if (ret.Equals(0))
             {
-                return new ApiResponse<ClienteUpdateRequest>()
+                return new ApiResponse<UpdateRequest>()
                 {
                     status_code = (int)HttpStatusCode.NotModified,
                     message = "Os dados do cliente nao foram atualizados",
@@ -141,7 +186,7 @@ namespace Api.Services
                 };
             }
 
-            return new ApiResponse<ClienteUpdateRequest>()
+            return new ApiResponse<UpdateRequest>()
             {
                 status_code = (int)HttpStatusCode.Accepted,
                 message = "Dados do cliente atualizados com sucesso",

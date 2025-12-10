@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Models;
 using Api.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Api
@@ -14,7 +15,7 @@ namespace Api
             builder.Services.Configure<AppSettings>(builder.Configuration);
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
 
-           // builder.Services.AddSingleton(AppSettins);
+            // builder.Services.AddSingleton(AppSettins);
             builder.Services.AddScoped<IClienteService, ClienteService>();
             builder.Services.AddScoped<IClienteData, ClienteData>();
             builder.Services.AddScoped<IContaCorrenteService, ContaCorrenteService>();
@@ -24,8 +25,22 @@ namespace Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //Habilitando CORs
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyMethod()
+                              .AllowAnyHeader();
+                    });
+            });
+            
             var app = builder.Build();
 
+            // Ativa CORS para todos
+            app.UseCors("AllowAll");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

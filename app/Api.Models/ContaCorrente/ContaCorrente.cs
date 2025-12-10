@@ -47,12 +47,15 @@ namespace Api.Models.ContaCorrente
 
             return (false, isvalid.message);
         }
-        public (bool valid, string message) IsValid(decimal valor)
+        public (bool valid, string message) IsValid(decimal valor, bool permiteNegativo=false)
         {
             var isvalid = IsValid();
 
             if (valor.Equals(0))
                 isvalid.message += "Valor invalido.";
+
+            if ((!permiteNegativo) && valor < 0)
+                isvalid.message += "Nao pode usar valor negativo.";
 
             if (string.IsNullOrEmpty(isvalid.message))
                 return (true, "");

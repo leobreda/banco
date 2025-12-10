@@ -13,6 +13,16 @@ namespace Api.Controllers
             clienteService = _clienteService;
         }
 
+        [HttpPost]
+        [Route("/login")]
+        [EndpointDescription("Realiza o login do cliente, retornando o token")]
+        public async Task<ActionResult<ApiResponse<LoginResponse>>> Create(LoginRequest request)
+        {
+            var result = await clienteService.Login(request);
+
+            return StatusCode(result.status_code, result);
+        }
+
 
         [HttpGet]
         [Route("/clientes")]
@@ -27,7 +37,7 @@ namespace Api.Controllers
         [HttpPost]
         [Route("/clientes")]
         [EndpointDescription("Cadastra um novo cliente")]
-        public async Task<ActionResult<ApiResponse<ClienteCreateResponse>>> Create(ClienteCreateRequest request)
+        public async Task<ActionResult<ApiResponse<CreateResponse>>> Create(CreateRequest request)
         {
             var result = await clienteService.Create(request);
 
@@ -47,7 +57,7 @@ namespace Api.Controllers
         [HttpPut]
         [Route("/clientes/{id}")]
         [EndpointDescription("Atualiza os dados do cliente")]
-        public async Task<ActionResult<ApiResponse<ClienteUpdateRequest>>> Put(uint id, ClienteUpdateRequest request)
+        public async Task<ActionResult<ApiResponse<UpdateRequest>>> Put(uint id, UpdateRequest request)
         {
             var result = await clienteService.Update(id, request);
 
