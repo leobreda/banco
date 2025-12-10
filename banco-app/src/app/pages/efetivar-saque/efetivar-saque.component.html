@@ -1,0 +1,12 @@
+<h2>Efetivar Saque</h2>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+<p><strong>Valor:</strong> {{ saque?.valor }}</p>
+
+<button class="btn btn-success" (click)="efetivar()">
+  Confirmar Saque
+</button>
+  <button type="button" class="btn btn-blue" (click)="inicio()">Início</button>
+

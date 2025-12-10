@@ -1,0 +1,16 @@
+<h2>Simular Saque</h2>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<form (ngSubmit)="simular()">
+
+  <div class="mb-3">
+    <label>Valor do Saque</label>
+    <input type="text" [(ngModel)]="valor" pattern="\d*"  name="valor" class="form-control" required>
+  </div>
+
+  <button class="btn btn-green" (click)="simular()">Simular</button>
+  
+  <button type="button" class="btn btn-blue" (click)="inicio()">Início</button>
+
+</form>

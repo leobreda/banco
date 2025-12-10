@@ -1,0 +1,20 @@
+<div class="container" style="max-width:720px;margin-top:40px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <h2>Bem-vindo, {{ user.nome }}</h2>
+    
+    <button class="btn btn-red" (click)="logout()">Sair</button>
+  </div>
+<p><strong>Agência:</strong> {{ saldo.agencia }}</p>
+<p><strong>Conta:</strong> {{ saldo.conta }}-{{ saldo.dac }}</p>
+<hr />
+  <div *ngIf="saldo">
+    
+    <p><strong>Saldo:</strong> R$ {{ saldo.saldo }}</p>
+  </div>
+  <div *ngIf="!saldo">Carregando...</div>
+</div>
+<!-- <button class="btn" (click)="openModal()">Depositar</button> -->
+<button (click)="irParaContas()" class="btn btn-blue">Ver Contas Correntes</button> &nbsp; 
+<button (click)="irParaNovaConta()" class="btn btn-blue">Cadastrar Nova Conta</button>
+<button (click)="irParaDepositar()" class="btn btn-blue">Depositar $$$</button>
+<button (click)="irParaSaque()" class="btn btn-blue">Sacar $$$</button>

@@ -1,0 +1,41 @@
+<h2>Depósito</h2>
+
+<div style="color: green;" *ngIf="mensagem">
+  {{ mensagem }}
+</div>
+
+<div style="color: red;" *ngIf="erro">
+  {{ erro }}
+</div>
+
+<!-- FORMULÁRIO DE SIMULAÇÃO -->
+<h3>Simular Depósito</h3>
+
+<label>Agência</label><br>
+<input type="number" [(ngModel)]="model.agencia" name="agencia"><br><br>
+  
+<label>Conta</label><br>
+<input type="number" [(ngModel)]="model.conta" name="conta"><br><br>
+
+<label>DAC</label><br>
+<input type="number" [(ngModel)]="model.dac" name="dac"><br><br>
+
+<label>Valor</label><br>
+<input type="number" [(ngModel)]="model.valor" name="valor"><br><br>
+
+<button (click)="simular()" class="btn btn-green">Simular Depósito</button>
+
+<hr>
+
+<!-- RESULTADO DA SIMULAÇÃO -->
+<div *ngIf="simulacao">
+  <h3>Resultado da Simulação</h3>
+
+  <p><b>Nome:</b> {{ simulacao.nome }}</p>
+  <p><b>Valor:</b> {{ simulacao.valor }}</p>
+  <p><b>Token:</b> {{ simulacao.token }}</p>
+
+  <button (click)="efetivar()" class="btn btn-green">Efetivar Depósito</button>
+</div>
+
+  <button type="button" class="btn btn-blue" (click)="inicio()">Início</button>
